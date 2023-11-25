@@ -16,7 +16,7 @@ export default defineComponent({
     },
     duration: {
       type: Number,
-      default: null,
+      default: 0,
     },
   },
   computed: {

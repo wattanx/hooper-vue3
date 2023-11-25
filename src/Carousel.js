@@ -286,7 +286,7 @@ export default {
     getCurrentSlideTimeout() {
       const curIdx = normalizeSlideIndex(this.currentSlide, this.slidesCount);
       const children = normalizeChildren(this);
-      return children[curIdx].type.props.duration;
+      return children[curIdx].props?.duration ?? this.playSpeed;
     }, // switched to using a timeout which defaults to the prop set on this component, but can be overridden on a per slide basis.
     initAutoPlay() {
       this.timer = new Timer(() => {
@@ -637,6 +637,7 @@ function renderBufferSlides(slides) {
 
 function renderSlides() {
   const children = normalizeChildren(this);
+
   const childrenCount = children.length;
   const self = this;
   let idx = 0;
@@ -652,10 +653,9 @@ function renderSlides() {
       ...child,
       key: idx,
       props: {
-        ...(child.type.props || {}),
+        ...(child.props || {}),
         isClone: false,
         index: idx++,
-        duration: undefined,
       },
     });
   }
