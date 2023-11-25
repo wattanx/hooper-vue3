@@ -1,8 +1,8 @@
-import { h } from "vue";
+import { h, defineComponent } from "vue";
 import { normalizeSlideIndex } from "../utils";
 import "../styles/progress.css";
 
-export default {
+export default defineComponent({
   inject: ["$hooper"],
   name: "HooperProgress",
   computed: {
@@ -28,4 +28,4 @@ export default {
       }),
     ]);
   },
-};
+});

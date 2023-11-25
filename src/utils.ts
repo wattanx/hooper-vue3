@@ -1,4 +1,4 @@
-export function getInRange(value, min, max) {
+export function getInRange(value: number, min: number, max: number) {
   return Math.max(Math.min(value, max), min);
 }
 
@@ -6,37 +6,46 @@ export function now() {
   return Date.now();
 }
 
-export function Timer(callback, defaultTime) {
-  this.create = function () {
-    return window.setTimeout(callback, defaultTime);
-  };
+export class Timer {
+  private timer: number | null = null;
+  private defaultTime: number;
+  private callback: Function;
 
-  this.stop = function () {
+  constructor(callback: Function, defaultTime: number) {
+    this.callback = callback;
+    this.defaultTime = defaultTime;
+    this.timer = this.create();
+  }
+
+  create() {
+    return window.setTimeout(this.callback, this.defaultTime);
+  }
+
+  stop() {
     if (this.timer) {
       window.clearTimeout(this.timer);
       this.timer = null;
     }
-  };
+  }
 
-  this.start = function () {
+  start() {
     if (!this.timer) {
       this.timer = this.create();
     }
-  };
+  }
 
-  this.set = function (newTime) {
-    const timeout = newTime || defaultTime;
-    this.timer = window.setTimeout(callback, timeout);
-  };
-  this.timer = this.create();
+  set(newTime: number) {
+    const timeout = newTime || this.defaultTime;
+    this.timer = window.setTimeout(this.callback, timeout);
+  }
 }
 
-export function camelCaseToString(camelCase) {
+export function camelCaseToString(camelCase: string) {
   camelCase = camelCase.replace(/([A-Z]+)/g, " $1");
   return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
 }
 
-export function normalizeSlideIndex(index, slidesCount) {
+export function normalizeSlideIndex(index: number, slidesCount: number) {
   let realIndex;
   if (index < 0) {
     realIndex = (index + slidesCount) % slidesCount;
@@ -52,6 +61,7 @@ export function normalizeSlideIndex(index, slidesCount) {
   return realIndex;
 }
 
+// @ts-expect-error
 export function cloneNode(h, vNode) {
   // use the context that the original vnode was created in.
   const children = vNode.children || vNode.text;
@@ -60,40 +70,9 @@ export function cloneNode(h, vNode) {
   return h(tag, vNode.data, children);
 }
 
-// IE11 :)
-function assignPoly(target) {
-  if (target === undefined || target === null) {
-    throw new TypeError("Cannot convert first argument to object");
-  }
+export const assign = Object.assign;
 
-  var to = Object(target);
-  for (var i = 1; i < arguments.length; i++) {
-    var nextSource = arguments[i];
-    if (nextSource === undefined || nextSource === null) {
-      continue;
-    }
-    nextSource = Object(nextSource);
-
-    var keysArray = Object.keys(Object(nextSource));
-    for (
-      var nextIndex = 0, len = keysArray.length;
-      nextIndex < len;
-      nextIndex++
-    ) {
-      var nextKey = keysArray[nextIndex];
-      var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
-      if (desc !== undefined && desc.enumerable) {
-        to[nextKey] = nextSource[nextKey];
-      }
-    }
-  }
-
-  return to;
-}
-
-export const assign = Object.assign || assignPoly;
-
-function signPoly(value) {
+function signPoly(value: any) {
   if (value < 0) {
     return -1;
   }
@@ -103,6 +82,6 @@ function signPoly(value) {
 
 export const sign = Math.sign || signPoly;
 
-export function normalizeChildren(context, slotProps = {}) {
+export function normalizeChildren(context: any, slotProps = {}) {
   return context.$slots.default(slotProps) || [];
 }

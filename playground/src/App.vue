@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// @ts-ignore
 import { Hooper, Slide, Navigation, Pagination } from "../../src/index";
 import "../../src/styles/carousel.css";
 import "../../src/styles/navigation.css";

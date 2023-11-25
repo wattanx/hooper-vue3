@@ -1,4 +1,4 @@
-import { h, defineComponent } from "vue";
+import { h, defineComponent, PropType } from "vue";
 import { camelCaseToString } from "../utils";
 
 const icons = {
@@ -6,7 +6,7 @@ const icons = {
   arrowDown: "M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z",
   arrowRight: "M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z",
   arrowLeft: "M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z",
-};
+} as const;
 
 export default defineComponent({
   name: "HooperIcon",
@@ -14,7 +14,7 @@ export default defineComponent({
   inheritAttrs: true,
   props: {
     name: {
-      type: String,
+      type: String as PropType<keyof typeof icons>,
       required: true,
       validator: (val: string) => val in icons,
     },

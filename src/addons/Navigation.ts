@@ -1,8 +1,8 @@
-import { h } from "vue";
+import { h, defineComponent } from "vue";
 import Icon from "./Icon";
 import "../styles/navigation.css";
 
-function iconName(isVertical, isRTL, isPrev) {
+function iconName(isVertical: boolean, isRTL: boolean, isPrev: boolean) {
   if (isPrev) {
     return isVertical ? "arrowUp" : isRTL ? "arrowRight" : "arrowLeft";
   }
@@ -10,7 +10,13 @@ function iconName(isVertical, isRTL, isPrev) {
   return isVertical ? "arrowDown" : isRTL ? "arrowLeft" : "arrowRight";
 }
 
-function renderButton(disabled, slot, isPrev, { isVertical, isRTL }, onClick) {
+function renderButton(
+  disabled: boolean,
+  slot: any,
+  isPrev: boolean,
+  { isVertical, isRTL }: { isVertical: boolean; isRTL: boolean },
+  onClick: () => void
+) {
   const children =
     slot && slot.length
       ? slot()
@@ -34,7 +40,7 @@ function renderButton(disabled, slot, isPrev, { isVertical, isRTL }, onClick) {
   );
 }
 
-export default {
+export default defineComponent({
   inject: ["$hooper"],
   name: "HooperNavigation",
   computed: {
@@ -105,4 +111,4 @@ export default {
       children
     );
   },
-};
+});

@@ -1,3 +1,4 @@
+// @ts-expect-error
 import Carousel from "./Carousel";
 import Slide from "./Slide";
 import addonMixin from "./addons/Mixin";

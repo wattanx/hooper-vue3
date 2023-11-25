@@ -1,12 +1,16 @@
-import { h } from "vue";
+import { h, defineComponent } from "vue";
 import { normalizeSlideIndex } from "../utils";
 import "../styles/pagination.css";
 
-function renderFraction(current, totalCount) {
+function renderFraction(current: number, totalCount: number) {
   return [h("span", current + 1), h("span", "/"), h("span", totalCount)];
 }
 
-function renderIndicator(index, isCurrent, onClick) {
+function renderIndicator(
+  index: number,
+  isCurrent: boolean,
+  onClick: () => void
+) {
   return h("li", [
     h(
       "button",
@@ -20,7 +24,11 @@ function renderIndicator(index, isCurrent, onClick) {
   ]);
 }
 
-function renderDefault(current, totalCount, slideToIndex) {
+function renderDefault(
+  current: number,
+  totalCount: number,
+  slideToIndex: (index: number) => void
+) {
   const children = [];
   for (let i = 0; i < totalCount; i++) {
     children.push(renderIndicator(i, i === current, () => slideToIndex(i)));
@@ -37,7 +45,7 @@ function renderDefault(current, totalCount, slideToIndex) {
   ];
 }
 
-export default {
+export default defineComponent({
   inject: ["$hooper"],
   name: "HooperPagination",
   props: {
@@ -54,6 +62,7 @@ export default {
       );
     },
     slides() {
+      // @ts-expect-error
       const slides = this.$hooper.slides.map((_, index) => index);
       return slides.slice(
         this.$hooper.trimStart,
@@ -81,4 +90,4 @@ export default {
       children
     );
   },
-};
+});
