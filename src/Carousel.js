@@ -1,13 +1,10 @@
-import { h, nextTick } from "vue";
+import { h, nextTick, cloneVNode } from "vue";
 import {
   getInRange,
   now,
   Timer,
   normalizeSlideIndex,
-  cloneNode,
   normalizeChildren,
-  sign,
-  assign,
 } from "./utils";
 import "./styles/carousel.css";
 import emitter from "tiny-emitter/instance";
@@ -18,6 +15,37 @@ let EMITTER = {
   $off: (...args) => emitter.on(...args),
   $emit: (...args) => emitter.on(...args),
 };
+
+function renderBufferSlides(slides) {
+  const before = [];
+  const after = [];
+  // reduce prop access
+  const slidesCount = slides.length;
+
+  for (let i = 0; i < slidesCount; i++) {
+    const slide = slides[i];
+    const clonedBefore = cloneVNode(slide);
+    let slideIndex = i - slidesCount;
+    clonedBefore.key = `before_${i}`;
+    clonedBefore.props = {
+      index: slideIndex,
+      isClone: true,
+    };
+
+    before.push(clonedBefore);
+
+    const clonedAfter = cloneVNode(slide);
+    slideIndex = i + slidesCount;
+    clonedAfter.key = `after_${slideIndex}`;
+    clonedAfter.props = {
+      index: slideIndex,
+      isClone: true,
+    };
+    after.push(clonedAfter);
+  }
+
+  return [...before, ...slides, ...after];
+}
 
 export default {
   name: "Hooper",
@@ -314,8 +342,8 @@ export default {
     },
     initDefaults() {
       this.breakpoints = this.settings.breakpoints;
-      this.defaults = assign({}, this.$props, this.settings);
-      this.config = assign({}, this.defaults);
+      this.defaults = Object.assign({}, this.$props, this.settings);
+      this.config = Object.assign({}, this.defaults);
     },
     // updating methods
     update() {
@@ -359,7 +387,7 @@ export default {
       breakpoints.some((breakpoint) => {
         matched = window.matchMedia(`(min-width: ${breakpoint}px)`).matches;
         if (matched) {
-          this.config = assign(
+          this.config = Object.assign(
             {},
             this.config,
             this.defaults,
@@ -369,7 +397,7 @@ export default {
         }
       });
       if (!matched) {
-        this.config = assign(this.config, this.defaults);
+        this.config = Object.assign(this.config, this.defaults);
       }
     },
     restartTimer() {
@@ -463,10 +491,12 @@ export default {
         const draggedSlides = Math.round(
           Math.abs(this.delta.y / this.slideHeight) + tolerance
         );
-        this.slideTo(this.currentSlide - sign(this.delta.y) * draggedSlides);
+        this.slideTo(
+          this.currentSlide - Math.sign(this.delta.y) * draggedSlides
+        );
       }
       if (!this.config.vertical) {
-        const direction = (this.config.rtl ? -1 : 1) * sign(this.delta.x);
+        const direction = (this.config.rtl ? -1 : 1) * Math.sign(this.delta.x);
         const draggedSlides = Math.round(
           Math.abs(this.delta.x / this.slideWidth) + tolerance
         );
@@ -528,7 +558,7 @@ export default {
       // get wheel direction
       this.lastScrollTime = now();
       const value = event.wheelDelta || -event.deltaY;
-      const delta = sign(value);
+      const delta = Math.sign(value);
       if (delta === -1) {
         this.slideNext();
       }
@@ -546,6 +576,88 @@ export default {
         this.slideTo(slideIndex, false);
       };
       EMITTER.$on(`slideGroup:${this.group}`, this._groupSlideHandler);
+    },
+    renderSlides() {
+      const children = normalizeChildren(this);
+
+      const childrenCount = children.length;
+      let idx = 0;
+      let slides = [];
+
+      for (let i = 0; i < childrenCount; i++) {
+        const child = children[i];
+        if (!child || child.type.name !== "HooperSlide") {
+          continue;
+        }
+
+        slides.push({
+          ...child,
+          key: idx,
+          props: {
+            ...(child.props || {}),
+            isClone: false,
+            index: idx++,
+          },
+        });
+      }
+
+      // update hooper's information of the slide count.
+      this.slidesCount = slides.length;
+      if (this.config.infiniteScroll) {
+        slides = renderBufferSlides(slides);
+      }
+
+      return h(
+        "ul",
+        {
+          class: {
+            "hooper-track": true,
+            "is-dragging": this.isDragging,
+          },
+          style: this.trackTransform + this.trackTransition,
+          ref: "track",
+          onTransitionend: this.onTransitionend,
+          onMousedown: this.config.mouseDrag
+            ? function (e) {
+                this.onDragStart(e);
+              }
+            : undefined,
+          onTouchstart: this.config.mouseDrag
+            ? function (e) {
+                this.onDragStart(e);
+              }
+            : undefined,
+        },
+        slides
+      );
+    },
+    renderBody() {
+      const slides = this.renderSlides();
+      const addons =
+        (this.$slots["hooper-addons"] && this.$slots["hooper-addons"]()) || [];
+      const a11y = h(
+        "div",
+        {
+          class: "hooper-liveregion hooper-sr-only",
+          "aria-live": "polite",
+          "aria-atomic": "true",
+        },
+        `Item ${this.currentSlide + 1} of ${this.slidesCount}`
+      );
+
+      const children = [...addons, a11y];
+
+      return [
+        h(
+          "div",
+          {
+            class: "hooper-list",
+            ref: "list",
+          },
+          slides
+        ),
+        children,
+      ];
     },
   },
   created() {
@@ -579,7 +691,7 @@ export default {
     }
   },
   render() {
-    const body = renderBody.call(this, h);
+    const body = this.renderBody();
 
     return h(
       "section",
@@ -599,123 +711,3 @@ export default {
     );
   },
 };
-
-function renderBufferSlides(slides) {
-  const before = [];
-  const after = [];
-  // reduce prop access
-  const slidesCount = slides.length;
-
-  for (let i = 0; i < slidesCount; i++) {
-    const slide = slides[i];
-    const clonedBefore = cloneNode(h, slide);
-    let slideIndex = i - slidesCount;
-    clonedBefore.data.key = `before_${i}`;
-    clonedBefore.key = clonedBefore.data.key;
-    clonedBefore.props.index = slideIndex;
-    clonedBefore.data.props = {
-      index: slideIndex,
-      isClone: true,
-    };
-
-    before.push(clonedBefore);
-
-    const clonedAfter = cloneNode(h, slide);
-    slideIndex = i + slidesCount;
-    clonedAfter.data.key = `after_${slideIndex}`;
-    clonedAfter.props.index = slideIndex;
-    clonedAfter.key = clonedAfter.data.key;
-    clonedAfter.props = {
-      index: slideIndex,
-      isClone: true,
-    };
-    after.push(clonedAfter);
-  }
-
-  return [...before, ...slides, ...after];
-}
-
-function renderSlides() {
-  const children = normalizeChildren(this);
-
-  const childrenCount = children.length;
-  const self = this;
-  let idx = 0;
-  let slides = [];
-
-  for (let i = 0; i < childrenCount; i++) {
-    const child = children[i];
-    if (!child || child.type.name !== "HooperSlide") {
-      continue;
-    }
-
-    slides.push({
-      ...child,
-      key: idx,
-      props: {
-        ...(child.props || {}),
-        isClone: false,
-        index: idx++,
-      },
-    });
-  }
-
-  // update hooper's information of the slide count.
-  this.slidesCount = slides.length;
-  if (this.config.infiniteScroll) {
-    slides = renderBufferSlides(slides);
-  }
-
-  return h(
-    "ul",
-    {
-      class: {
-        "hooper-track": true,
-        "is-dragging": this.isDragging,
-      },
-      style: this.trackTransform + this.trackTransition,
-      ref: "track",
-      onTransitionend: this.onTransitionend,
-      onMousedown: this.config.mouseDrag
-        ? function (e) {
-            self.onDragStart(e);
-          }
-        : undefined,
-      onTouchstart: this.config.mouseDrag
-        ? function (e) {
-            self.onDragStart(e);
-          }
-        : undefined,
-    },
-    slides
-  );
-}
-
-function renderBody() {
-  const slides = renderSlides.call(this, h);
-  const addons =
-    (this.$slots["hooper-addons"] && this.$slots["hooper-addons"]()) || [];
-  const a11y = h(
-    "div",
-    {
-      class: "hooper-liveregion hooper-sr-only",
-      "aria-live": "polite",
-      "aria-atomic": "true",
-    },
-    `Item ${this.currentSlide + 1} of ${this.slidesCount}`
-  );
-
-  const children = [...addons, a11y];
-
-  return [
-    h(
-      "div",
-      {
-        class: "hooper-list",
-        ref: "list",
-      },
-      slides
-    ),
-    children,
-  ];
-}

@@ -61,27 +61,6 @@ export function normalizeSlideIndex(index: number, slidesCount: number) {
   return realIndex;
 }
 
-// @ts-expect-error
-export function cloneNode(h, vNode) {
-  // use the context that the original vnode was created in.
-  const children = vNode.children || vNode.text;
-  const tag = vNode.children;
-
-  return h(tag, vNode.data, children);
-}
-
-export const assign = Object.assign;
-
-function signPoly(value: any) {
-  if (value < 0) {
-    return -1;
-  }
-
-  return value > 0 ? 1 : 0;
-}
-
-export const sign = Math.sign || signPoly;
-
 export function normalizeChildren(context: any, slotProps = {}) {
   return context.$slots.default(slotProps) || [];
 }

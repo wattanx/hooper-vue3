@@ -4,7 +4,7 @@ import "../../src/index.css";
 </script>
 
 <template>
-  <Hooper autoPlay :style="{ 'max-width': '720px' }">
+  <Hooper infiniteScroll :style="{ 'max-width': '720px' }">
     <Slide :duration="3000">slide 1</Slide>
     <Slide>slide 2</Slide>
     <Slide>slide 3</Slide>
