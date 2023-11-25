@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { Hooper, Slide, Navigation, Pagination } from "../../src/index";
-import "../../src/styles/carousel.css";
-import "../../src/styles/navigation.css";
-import "../../src/styles/pagination.css";
-import "../../src/styles/progress.css";
-import "../../src/styles/slide.css";
+import "../../src/index.css";
 </script>
 
 <template>
