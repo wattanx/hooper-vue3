@@ -71,7 +71,6 @@ export default {
     },
   },
   render() {
-    console.log(this.$hooper.config.rtl);
     const config = {
       isRTL: this.$hooper.config.rtl,
       isVertical: this.$hooper.config.vertical,

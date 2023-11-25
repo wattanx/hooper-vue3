@@ -1,4 +1,4 @@
-import { h, ref } from "vue";
+import { h, nextTick } from "vue";
 import {
   getInRange,
   now,
@@ -126,8 +126,6 @@ export default {
   },
   data() {
     return {
-      list: ref(null),
-      track: ref(null),
       isDragging: false,
       isSliding: false,
       isTouch: false,
@@ -149,6 +147,7 @@ export default {
       config: {},
     };
   },
+  emits: ["updated", "slide", "afterSlide", "beforeSlide", "loaded"],
   computed: {
     slideBounds() {
       const { config, currentSlide } = this;
@@ -374,7 +373,7 @@ export default {
       }
     },
     restartTimer() {
-      this.$nextTick(() => {
+      nextTick(() => {
         if (this.timer === null && this.$props.autoPlay) {
           this.initAutoPlay();
           return;
@@ -390,7 +389,7 @@ export default {
       });
     },
     restart() {
-      this.$nextTick(() => {
+      nextTick(() => {
         this.update();
       });
     },
@@ -553,16 +552,21 @@ export default {
     this.initDefaults();
   },
   mounted() {
-    this.$nextTick(() => {
+    this.initEvents();
+    this.addGroupListeners();
+    nextTick(() => {
       this.update();
       this.slideTo(this.config.initialSlide || 0);
+
+      nextTick(() => {
+        this.update();
+      });
+
       setTimeout(() => {
         this.$emit("loaded");
         this.initialized = true;
       }, this.transition);
     });
-    this.initEvents();
-    this.addGroupListeners();
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.update);
@@ -712,6 +716,6 @@ function renderBody() {
       },
       slides
     ),
-    ...children,
+    children,
   ];
 }
