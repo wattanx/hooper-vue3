@@ -1,12 +1,17 @@
 {
   "name": "@wattanx/hooper-vue3",
   "version": "0.0.1",
-  "description": "",
+  "description": "A customizable accessible carousel slider optimized for Vue 3",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "vitest run",
-    "dev": "pnpm -C playground dev "
+    "dev": "pnpm -C playground dev",
+    "build": "unbuild"
   },
   "repository": {
     "type": "git",

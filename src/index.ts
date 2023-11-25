@@ -16,5 +16,3 @@ export {
   Icon,
   addonMixin,
 };
-
-export default Carousel;
