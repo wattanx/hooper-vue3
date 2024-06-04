@@ -7,7 +7,9 @@ import {
   normalizeChildren,
 } from "./utils";
 import "./styles/carousel.css";
-import emitter from "tiny-emitter/instance";
+import Emitter from "tiny-emitter";
+
+const emitter = new Emitter()
 
 let EMITTER = {
   $on: (...args) => emitter.on(...args),
