@@ -9,7 +9,7 @@ import {
 import "./styles/carousel.css";
 import Emitter from "tiny-emitter";
 
-const emitter = new Emitter()
+const emitter = new Emitter();
 
 let EMITTER = {
   $on: (...args) => emitter.on(...args),
@@ -588,7 +588,32 @@ export default {
 
       for (let i = 0; i < childrenCount; i++) {
         const child = children[i];
-        if (!child || child.type.name !== "HooperSlide") {
+
+        if (!child) {
+          continue;
+        }
+
+        // v-for
+        if (typeof child.type === "symbol") {
+          child.children.forEach((c) => {
+            if (c.type.name !== "HooperSlide") {
+              return;
+            }
+
+            slides.push({
+              ...c,
+              key: idx,
+              props: {
+                ...(c.props || {}),
+                isClone: false,
+                index: idx++,
+              },
+            });
+          });
+          continue;
+        }
+
+        if (child.type.name !== "HooperSlide") {
           continue;
         }
 
