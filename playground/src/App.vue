@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Hooper, Slide, Navigation, Pagination } from "../../src/index";
 import "../../src/index.css";
+
+const slides = [1, 2, 3, 4, 5, 6];
 </script>
 
 <template>
@@ -11,6 +13,15 @@ import "../../src/index.css";
     <Slide>slide 4</Slide>
     <Slide>slide 5</Slide>
     <Slide>slide 6</Slide>
+    <template #hooper-addons>
+      <Navigation></Navigation>
+      <Pagination />
+    </template>
+  </Hooper>
+  <Hooper infiniteScroll :style="{ 'max-width': '720px' }">
+    <Slide v-for="(slide, index) in slides" :key="index" :index="index">
+      slide{{ slide }}
+    </Slide>
     <template #hooper-addons>
       <Navigation></Navigation>
       <Pagination />
