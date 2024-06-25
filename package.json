@@ -25,8 +25,9 @@
   ],
   "scripts": {
     "test": "vitest run",
-    "dev": "pnpm -C playground dev",
-    "build": "unbuild"
+    "dev": "pnpm run build:stub && pnpm -C playground dev",
+    "build": "unbuild",
+    "build:stub": "unbuild --stub"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "@vitejs/plugin-vue": "^4.5.0",
     "@vue/test-utils": "^2.4.2",
     "happy-dom": "^12.10.3",
+    "prettier": "^3.3.2",
     "rollup": "^4.5.2",
     "rollup-plugin-postcss": "^4.0.2",
     "typescript": "^5.3.2",
