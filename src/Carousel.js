@@ -315,7 +315,12 @@ export default {
     },
     getCurrentSlideTimeout() {
       const curIdx = normalizeSlideIndex(this.currentSlide, this.slidesCount);
-      const children = normalizeChildren(this);
+      const normalizedchildren = normalizeChildren(this);
+
+      const children =
+        typeof normalizedchildren[0]?.type === "symbol"
+          ? normalizedchildren[0].children
+          : normalizedchildren;
       return children[curIdx].props?.duration ?? this.playSpeed;
     }, // switched to using a timeout which defaults to the prop set on this component, but can be overridden on a per slide basis.
     initAutoPlay() {
