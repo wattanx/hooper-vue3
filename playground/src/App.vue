@@ -6,7 +6,7 @@ const slides = [1, 2, 3, 4, 5, 6];
 </script>
 
 <template>
-  <Hooper infiniteScroll :style="{ 'max-width': '720px' }">
+  <Hooper :autoPlay="true" infiniteScroll :style="{ 'max-width': '720px' }">
     <Slide :duration="3000">slide 1</Slide>
     <Slide>slide 2</Slide>
     <Slide>slide 3</Slide>
@@ -18,8 +18,13 @@ const slides = [1, 2, 3, 4, 5, 6];
       <Pagination />
     </template>
   </Hooper>
-  <Hooper infiniteScroll :style="{ 'max-width': '720px' }">
-    <Slide v-for="(slide, index) in slides" :key="index" :index="index">
+  <Hooper :autoPlay="true" infiniteScroll :style="{ 'max-width': '720px' }">
+    <Slide
+      :duration="5000"
+      v-for="(slide, index) in slides"
+      :key="index"
+      :index="index"
+    >
       slide{{ slide }}
     </Slide>
     <template #hooper-addons>
