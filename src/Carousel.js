@@ -650,14 +650,10 @@ export default {
           ref: "track",
           onTransitionend: this.onTransitionend,
           onMousedown: this.config.mouseDrag
-            ? function (e) {
-                this.onDragStart(e);
-              }
+            ? this.onDragStart.bind(this)
             : undefined,
           onTouchstart: this.config.mouseDrag
-            ? function (e) {
-                this.onDragStart(e);
-              }
+            ? this.onDragStart.bind(this)
             : undefined,
         },
         slides
