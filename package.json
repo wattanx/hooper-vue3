@@ -1,6 +1,6 @@
 {
   "name": "@wattanx/hooper-vue3",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "type": "module",
   "description": "A customizable accessible carousel slider optimized for Vue 3",
   "main": "./dist/index.cjs",
