@@ -1,4 +1,4 @@
-import { h, nextTick, cloneVNode } from "vue";
+import { h, nextTick, cloneVNode, defineComponent } from "vue";
 import {
   getInRange,
   now,
@@ -9,16 +9,17 @@ import {
 import "./styles/carousel.css";
 import Emitter from "tiny-emitter";
 
+// @ts-expect-error
 const emitter = new Emitter();
 
 let EMITTER = {
-  $on: (...args) => emitter.on(...args),
-  $once: (...args) => emitter.on(...args),
-  $off: (...args) => emitter.on(...args),
-  $emit: (...args) => emitter.on(...args),
+  $on: (...args: any[]) => emitter.on(...args),
+  $once: (...args: any[]) => emitter.on(...args),
+  $off: (...args: any[]) => emitter.on(...args),
+  $emit: (...args: any[]) => emitter.on(...args),
 };
 
-function renderBufferSlides(slides) {
+function renderBufferSlides(slides: any[]) {
   const before = [];
   const after = [];
   // reduce prop access
@@ -49,7 +50,29 @@ function renderBufferSlides(slides) {
   return [...before, ...slides, ...after];
 }
 
-export default {
+type Data = {
+  isDragging: boolean;
+  isSliding: boolean;
+  isTouch: boolean;
+  isHover: boolean;
+  isFocus: boolean;
+  initialized: boolean;
+  slideWidth: number;
+  containerWidth: number;
+  containerHeight: number;
+  slideHeight: number;
+  slidesCount: number;
+  trimStart: number;
+  trimEnd: number;
+  currentSlide: number;
+  timer: Timer | null;
+  defaults: Record<string, any>;
+  breakpoints: Record<string, any>;
+  delta: { x: number; y: number };
+  config: Record<string, any>;
+};
+
+export default defineComponent({
   name: "Hooper",
   provide() {
     return {
@@ -154,7 +177,7 @@ export default {
       default: null,
     },
   },
-  data() {
+  data(): Data {
     return {
       isDragging: false,
       isSliding: false,
@@ -169,7 +192,7 @@ export default {
       slidesCount: 0,
       trimStart: 0,
       trimEnd: 1,
-      currentSlide: null,
+      currentSlide: 0,
       timer: null,
       defaults: {},
       breakpoints: {},
@@ -248,7 +271,7 @@ export default {
   },
   methods: {
     // controlling methods
-    slideTo(slideIndex, isSource = true) {
+    slideTo(slideIndex: number, isSource = true) {
       if (this.isSliding || slideIndex === this.currentSlide) {
         return;
       }
@@ -332,7 +355,7 @@ export default {
           this.isFocus ||
           !this.$props.autoPlay
         ) {
-          this.timer.set(this.getCurrentSlideTimeout());
+          this.timer!.set(this.getCurrentSlideTimeout());
           return;
         }
         if (
@@ -340,11 +363,11 @@ export default {
           !this.config.infiniteScroll
         ) {
           this.slideTo(0);
-          this.timer.set(this.getCurrentSlideTimeout());
+          this.timer!.set(this.getCurrentSlideTimeout());
           return;
         }
         this.slideNext();
-        this.timer.set(this.getCurrentSlideTimeout());
+        this.timer!.set(this.getCurrentSlideTimeout());
       }, this.getCurrentSlideTimeout());
     },
     initDefaults() {
@@ -389,6 +412,7 @@ export default {
       this.slideWidth = this.containerWidth / this.config.itemsToShow;
     },
     updateConfig() {
+      // @ts-expect-error
       const breakpoints = Object.keys(this.breakpoints).sort((a, b) => b - a);
       let matched;
       breakpoints.some((breakpoint) => {
@@ -429,7 +453,7 @@ export default {
       });
     },
     // events handlers
-    onDragStart(event) {
+    onDragStart(event: DragEvent) {
       this.isTouch = event.type === "touchstart";
       if (!this.isTouch && event.button !== 0) {
         return;
@@ -439,14 +463,17 @@ export default {
       this.endPosition = { x: 0, y: 0 };
       this.isDragging = true;
       this.startPosition.x = this.isTouch
-        ? event.touches[0].clientX
+        ? // @ts-expect-error
+          event.touches[0].clientX
         : event.clientX;
       this.startPosition.y = this.isTouch
-        ? event.touches[0].clientY
+        ? // @ts-expect-error
+          event.touches[0].clientY
         : event.clientY;
 
       document.addEventListener(
         this.isTouch ? "touchmove" : "mousemove",
+        // @ts-expect-error
         this.onDrag
       );
       document.addEventListener(
@@ -454,7 +481,7 @@ export default {
         this.onDragEnd
       );
     },
-    isInvalidDirection(deltaX, deltaY) {
+    isInvalidDirection(deltaX: number, deltaY: number) {
       if (!this.config.vertical) {
         return Math.abs(deltaX) <= Math.abs(deltaY);
       }
@@ -465,16 +492,18 @@ export default {
 
       return false;
     },
-    onDrag(event) {
+    onDrag(event: DragEvent) {
       if (this.isSliding) {
         return;
       }
 
       this.endPosition.x = this.isTouch
-        ? event.touches[0].clientX
+        ? // @ts-expect-error
+          event.touches[0].clientX
         : event.clientX;
       this.endPosition.y = this.isTouch
-        ? event.touches[0].clientY
+        ? // @ts-expect-error
+          event.touches[0].clientY
         : event.clientY;
       const deltaX = this.endPosition.x - this.startPosition.x;
       const deltaY = this.endPosition.y - this.startPosition.y;
@@ -513,6 +542,7 @@ export default {
       this.delta.y = 0;
       document.removeEventListener(
         this.isTouch ? "touchmove" : "mousemove",
+        // @ts-expect-error
         this.onDrag
       );
       document.removeEventListener(
@@ -527,7 +557,7 @@ export default {
         currentSlide: this.currentSlide,
       });
     },
-    onKeypress(event) {
+    onKeypress(event: KeyboardEvent) {
       const key = event.key;
       if (key.startsWith("Arrow")) {
         event.preventDefault();
@@ -557,13 +587,14 @@ export default {
         this.slidePrev();
       }
     },
-    onWheel(event) {
+    onWheel(event: WheelEvent) {
       event.preventDefault();
       if (now() - this.lastScrollTime < 200) {
         return;
       }
       // get wheel direction
       this.lastScrollTime = now();
+      // @ts-expect-error
       const value = event.wheelDelta || -event.deltaY;
       const delta = Math.sign(value);
       if (delta === -1) {
@@ -578,7 +609,7 @@ export default {
         return;
       }
 
-      this._groupSlideHandler = (slideIndex) => {
+      this._groupSlideHandler = (slideIndex: number) => {
         // set the isSource to false to prevent infinite emitting loop.
         this.slideTo(slideIndex, false);
       };
@@ -600,6 +631,7 @@ export default {
 
         // v-for
         if (typeof child.type === "symbol") {
+          // @ts-expect-error
           child.children.forEach((c) => {
             if (c.type.name !== "HooperSlide") {
               return;
@@ -738,4 +770,14 @@ export default {
       body
     );
   },
-};
+});
+
+declare module "vue" {
+  interface ComponentCustomProperties {
+    $hooper: any;
+    _groupSlideHandler: (slideIndex: number) => void;
+    lastScrollTime: number;
+    startPosition: { x: number; y: number };
+    endPosition: { x: number; y: number };
+  }
+}
