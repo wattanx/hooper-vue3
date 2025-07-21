@@ -1,6 +1,7 @@
 import { defineBuildConfig } from "unbuild";
 
 export default defineBuildConfig({
-  failOnWarn: false,
+  entries: [{ input: 'src/index.ts' }],
   externals: ["vue"],
+  declaration: true,
 });
