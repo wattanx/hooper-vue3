@@ -13,15 +13,12 @@
     },
     "./css": {
       "types": "./src/css.d.ts",
-      "import": "./src/index.css",
-      "require": "./src/index.css"
+      "import": "./dist/index.css"
     }
   },
   "files": [
     "dist",
-    "src/*.d.ts",
-    "src/styles/*",
-    "src/index.css"
+    "src/*.d.ts"
   ],
   "scripts": {
     "test": "vitest run",

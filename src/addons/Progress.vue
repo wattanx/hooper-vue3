@@ -2,7 +2,6 @@
 import { computed } from "vue";
 import { useHooper } from "../composables/useHooper";
 import { normalizeSlideIndex } from "../utils";
-import "../styles/progress.css";
 
 const {
   currentSlide: hooperCurrentSlide,
@@ -26,3 +25,19 @@ const progress = computed(() => {
     <div class="hooper-progress-inner" :style="{ width: `${progress}%` }" />
   </div>
 </template>
+
+<style scoped>
+.hooper-progress {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background-color: #efefef;
+}
+.hooper-progress-inner {
+  height: 100%;
+  background-color: #4285f4;
+  transition: 300ms;
+}
+</style>

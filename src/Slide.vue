@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useHooper } from "./composables/useHooper";
-import "./styles/slide.css";
 
 defineOptions({
   name: "HooperSlide",
@@ -68,3 +67,13 @@ const isCurrent = computed(() => {
     <slot />
   </li>
 </template>
+
+<style scoped>
+.hooper-slide {
+  flex-shrink: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+</style>

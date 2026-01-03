@@ -2,7 +2,6 @@
 import { computed } from "vue";
 import { useHooper } from "../composables/useHooper";
 import { normalizeSlideIndex } from "../utils";
-import "../styles/pagination.css";
 
 const props = withDefaults(
   defineProps<{
@@ -69,3 +68,57 @@ function slideTo(index: number) {
     </template>
   </div>
 </template>
+
+<style scoped>
+.hooper-pagination {
+  position: absolute;
+  bottom: 0;
+  right: 50%;
+  transform: translateX(50%);
+  display: flex;
+  padding: 5px 10px;
+}
+.hooper-indicators {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hooper-indicator:hover,
+.hooper-indicator.is-active {
+  background-color: #4285f4;
+}
+.hooper-indicator {
+  margin: 0 2px;
+  width: 12px;
+  height: 4px;
+  border-radius: 4px;
+  border: none;
+  padding: 0;
+  background-color: #fff;
+  cursor: pointer;
+}
+.hooper-pagination.is-vertical {
+  bottom: auto;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.hooper-pagination.is-vertical .hooper-indicators {
+  flex-direction: column;
+}
+.hooper-pagination.is-vertical .hooper-indicator {
+  width: 6px;
+}
+
+.hooper-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+</style>
