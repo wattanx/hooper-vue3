@@ -7,17 +7,8 @@ import {
   normalizeChildren,
 } from "./utils";
 import "./styles/carousel.css";
-import Emitter from "tiny-emitter";
 
-// @ts-expect-error
-const emitter = new Emitter();
-
-let EMITTER = {
-  $on: (...args: any[]) => emitter.on(...args),
-  $once: (...args: any[]) => emitter.on(...args),
-  $off: (...args: any[]) => emitter.on(...args),
-  $emit: (...args: any[]) => emitter.on(...args),
-};
+const groupEmitter = new EventTarget();
 
 function renderBufferSlides(slides: any[]) {
   const before = [];
@@ -259,7 +250,7 @@ export default defineComponent({
         return;
       }
 
-      EMITTER.$off(`slideGroup:${oldVal}`, this._groupSlideHandler);
+      groupEmitter.removeEventListener(`slideGroup:${oldVal}`, this._groupSlideHandler);
       this.addGroupListeners();
     },
     autoPlay(val, oldVal) {
@@ -295,7 +286,9 @@ export default defineComponent({
 
       // Notify others if in a group and is the slide event initiator.
       if (this.group && isSource) {
-        EMITTER.$emit(`slideGroup:${this.group}`, slideIndex);
+        groupEmitter.dispatchEvent(
+          new CustomEvent(`slideGroup:${this.group}`, { detail: slideIndex })
+        );
       }
 
       this.currentSlide = index;
@@ -609,11 +602,12 @@ export default defineComponent({
         return;
       }
 
-      this._groupSlideHandler = (slideIndex: number) => {
+      this._groupSlideHandler = (event: Event) => {
+        const slideIndex = (event as CustomEvent<number>).detail;
         // set the isSource to false to prevent infinite emitting loop.
         this.slideTo(slideIndex, false);
       };
-      EMITTER.$on(`slideGroup:${this.group}`, this._groupSlideHandler);
+      groupEmitter.addEventListener(`slideGroup:${this.group}`, this._groupSlideHandler);
     },
     renderSlides() {
       const children = normalizeChildren(this);
@@ -743,7 +737,7 @@ export default defineComponent({
   beforeDestroy() {
     window.removeEventListener("resize", this.update);
     if (this.group) {
-      EMITTER.$off(`slideGroup:${this.group}`, this._groupSlideHandler);
+      groupEmitter.removeEventListener(`slideGroup:${this.group}`, this._groupSlideHandler);
     }
 
     if (this.timer) {
@@ -775,7 +769,7 @@ export default defineComponent({
 declare module "vue" {
   interface ComponentCustomProperties {
     $hooper: any;
-    _groupSlideHandler: (slideIndex: number) => void;
+    _groupSlideHandler: (event: Event) => void;
     lastScrollTime: number;
     startPosition: { x: number; y: number };
     endPosition: { x: number; y: number };
