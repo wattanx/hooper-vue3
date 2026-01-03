@@ -6,6 +6,27 @@ const slides = [1, 2, 3, 4, 5, 6];
 </script>
 
 <template>
+  <!-- Group Slide Example -->
+  <h2>Group Slide Example</h2>
+  <p>These two carousels are synchronized via the "group" prop</p>
+  <div class="group-container">
+    <Hooper group="gallery" :style="{ 'max-width': '400px' }">
+      <Slide v-for="n in 5" :key="n">Group A - Slide {{ n }}</Slide>
+      <template #hooper-addons>
+        <Navigation />
+      </template>
+    </Hooper>
+    <Hooper group="gallery" :style="{ 'max-width': '400px' }">
+      <Slide v-for="n in 5" :key="n">Group B - Slide {{ n }}</Slide>
+      <template #hooper-addons>
+        <Pagination />
+      </template>
+    </Hooper>
+  </div>
+
+  <hr />
+
+  <h2>AutoPlay Example</h2>
   <Hooper :autoPlay="true" infiniteScroll :style="{ 'max-width': '720px' }">
     <Slide :duration="3000">slide 1</Slide>
     <Slide>slide 2</Slide>
@@ -35,6 +56,20 @@ const slides = [1, 2, 3, 4, 5, 6];
 </template>
 
 <style>
+.group-container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-top: 20px;
+}
+
+hr {
+  margin: 40px 0;
+}
+
 .hooper-slide {
   background-color: #62caaa;
   padding: 20px;

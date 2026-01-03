@@ -55,9 +55,6 @@
     "vitest": "^4.0.16",
     "vue": "^3.3.8"
   },
-  "dependencies": {
-    "tiny-emitter": "^2.1.0"
-  },
   "publishConfig": {
     "access": "public"
   },
