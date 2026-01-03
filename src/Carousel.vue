@@ -13,6 +13,8 @@ import {
   useSlots,
 } from "vue";
 import { getInRange, now, Timer, normalizeSlideIndex } from "./utils";
+import { hooperContextKey } from "./composables/useHooper";
+import type { HooperConfig } from "./types";
 import "./styles/carousel.css";
 
 const props = withDefaults(
@@ -99,7 +101,7 @@ const timer = ref<Timer | null>(null);
 const defaults = ref<Record<string, any>>({});
 const breakpoints = ref<Record<string, any>>({});
 const delta = reactive({ x: 0, y: 0 });
-const config = ref<Record<string, any>>({});
+const config = ref<HooperConfig>({} as HooperConfig);
 
 // Non-reactive state
 let lastScrollTime = now();
@@ -284,7 +286,7 @@ function initAutoPlay() {
 function initDefaults() {
   breakpoints.value = props.settings.breakpoints;
   defaults.value = { ...props, ...props.settings };
-  config.value = { ...defaults.value };
+  config.value = { ...defaults.value } as HooperConfig;
 }
 
 function update() {
@@ -338,12 +340,12 @@ function updateConfig() {
         ...config.value,
         ...defaults.value,
         ...breakpoints.value[breakpoint],
-      };
+      } as HooperConfig;
       return true;
     }
   });
   if (!matched) {
-    config.value = { ...config.value, ...defaults.value };
+    config.value = { ...config.value, ...defaults.value } as HooperConfig;
   }
 }
 
@@ -641,7 +643,7 @@ function renderSlides() {
 const SlidesTrack = () => renderSlides();
 
 // Provide for child components
-provide("$hooper", {
+provide(hooperContextKey, {
   config,
   currentSlide,
   slidesCount,

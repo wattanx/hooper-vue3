@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed } from "vue";
+import { useHooper } from "./composables/useHooper";
 import "./styles/slide.css";
+
+defineOptions({
+  name: "HooperSlide",
+});
 
 const props = withDefaults(
   defineProps<{
@@ -15,35 +20,35 @@ const props = withDefaults(
   }
 );
 
-const $hooper = inject<any>("$hooper");
+const { config, slideHeight, slideWidth, slideBounds, currentSlide } =
+  useHooper();
 
 const style = computed(() => {
-  const { config, slideHeight, slideWidth } = $hooper || {};
-  if (config.vertical) {
-    return { height: `${slideHeight}px` };
+  if (config.value.vertical) {
+    return { height: `${slideHeight.value}px` };
   }
-  return { width: `${slideWidth}px` };
+  return { width: `${slideWidth.value}px` };
 });
 
 const isActive = computed(() => {
-  const { upper, lower } = $hooper.slideBounds;
+  const { upper, lower } = slideBounds.value;
   return props.index >= lower && props.index <= upper;
 });
 
 const isPrev = computed(() => {
-  const { lower } = $hooper.slideBounds;
-  const { itemsToSlide } = $hooper.config;
+  const { lower } = slideBounds.value;
+  const { itemsToSlide } = config.value;
   return props.index < lower && props.index >= lower - itemsToSlide;
 });
 
 const isNext = computed(() => {
-  const { upper } = $hooper.slideBounds;
-  const { itemsToSlide } = $hooper.config;
+  const { upper } = slideBounds.value;
+  const { itemsToSlide } = config.value;
   return props.index > upper && props.index <= upper + itemsToSlide;
 });
 
 const isCurrent = computed(() => {
-  return props.index === $hooper.currentSlide;
+  return props.index === currentSlide.value;
 });
 </script>
 

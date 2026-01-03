@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed } from "vue";
+import { useHooper } from "../composables/useHooper";
 import Icon from "./Icon.vue";
 import "../styles/navigation.css";
 
-const $hooper = inject<any>("$hooper");
+const {
+  config,
+  currentSlide,
+  slidesCount,
+  slidePrev: hooperSlidePrev,
+  slideNext: hooperSlideNext,
+  restartTimer,
+} = useHooper();
 
 function iconName(isVertical: boolean, isRTL: boolean, isPrev: boolean) {
   if (isPrev) {
@@ -14,39 +22,39 @@ function iconName(isVertical: boolean, isRTL: boolean, isPrev: boolean) {
 }
 
 const isPrevDisabled = computed(() => {
-  if ($hooper.config.infiniteScroll) {
+  if (config.value.infiniteScroll) {
     return false;
   }
-  return $hooper.currentSlide === 0;
+  return currentSlide.value === 0;
 });
 
 const isNextDisabled = computed(() => {
-  if ($hooper.config.infiniteScroll) {
+  if (config.value.infiniteScroll) {
     return false;
   }
 
-  if ($hooper.config.trimWhiteSpace) {
+  if (config.value.trimWhiteSpace) {
     return (
-      $hooper.currentSlide ===
-      $hooper.slidesCount -
-        Math.min($hooper.config.itemsToShow, $hooper.slidesCount)
+      currentSlide.value ===
+      slidesCount.value -
+        Math.min(config.value.itemsToShow, slidesCount.value)
     );
   }
 
-  return $hooper.currentSlide === $hooper.slidesCount - 1;
+  return currentSlide.value === slidesCount.value - 1;
 });
 
-const isVertical = computed(() => $hooper.config.vertical);
-const isRTL = computed(() => $hooper.config.rtl);
+const isVertical = computed(() => config.value.vertical);
+const isRTL = computed(() => config.value.rtl ?? false);
 
 function slidePrev() {
-  $hooper.slidePrev();
-  $hooper.restartTimer();
+  hooperSlidePrev();
+  restartTimer();
 }
 
 function slideNext() {
-  $hooper.slideNext();
-  $hooper.restartTimer();
+  hooperSlideNext();
+  restartTimer();
 }
 </script>
 

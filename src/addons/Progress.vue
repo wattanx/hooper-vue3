@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed } from "vue";
+import { useHooper } from "../composables/useHooper";
 import { normalizeSlideIndex } from "../utils";
 import "../styles/progress.css";
 
-const $hooper = inject<any>("$hooper");
+const {
+  currentSlide: hooperCurrentSlide,
+  slidesCount,
+  trimStart,
+  trimEnd,
+} = useHooper();
 
 const currentSlide = computed(() =>
-  normalizeSlideIndex($hooper.currentSlide, $hooper.slidesCount)
+  normalizeSlideIndex(hooperCurrentSlide.value, slidesCount.value)
 );
 
 const progress = computed(() => {
-  const range = $hooper.slidesCount - $hooper.trimStart - $hooper.trimEnd;
-  return ((currentSlide.value - $hooper.trimStart) * 100) / range;
+  const range = slidesCount.value - trimStart.value - trimEnd.value;
+  return ((currentSlide.value - trimStart.value) * 100) / range;
 });
 </script>
 

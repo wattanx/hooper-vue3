@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed } from "vue";
+import { useHooper } from "../composables/useHooper";
 import { normalizeSlideIndex } from "../utils";
 import "../styles/pagination.css";
 
@@ -12,15 +13,20 @@ const props = withDefaults(
   }
 );
 
-const $hooper = inject<any>("$hooper");
+const {
+  config,
+  currentSlide: hooperCurrentSlide,
+  slidesCount,
+  slideTo: hooperSlideTo,
+} = useHooper();
 
 const currentSlide = computed(() =>
-  normalizeSlideIndex($hooper.currentSlide, $hooper.slidesCount)
+  normalizeSlideIndex(hooperCurrentSlide.value, slidesCount.value)
 );
 
-const totalCount = computed(() => $hooper.slidesCount);
+const totalCount = computed(() => slidesCount.value);
 
-const isVertical = computed(() => $hooper.config.vertical);
+const isVertical = computed(() => config.value.vertical);
 
 const indicators = computed(() => {
   const result = [];
@@ -31,7 +37,7 @@ const indicators = computed(() => {
 });
 
 function slideTo(index: number) {
-  $hooper.slideTo(index);
+  hooperSlideTo(index);
 }
 </script>
 
