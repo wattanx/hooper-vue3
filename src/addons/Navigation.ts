@@ -1,5 +1,5 @@
 import { h, defineComponent } from "vue";
-import Icon from "./Icon";
+import Icon from "./Icon.vue";
 import "../styles/navigation.css";
 
 function iconName(isVertical: boolean, isRTL: boolean, isPrev: boolean) {
