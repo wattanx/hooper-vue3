@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Hooper, Slide, Navigation, Pagination } from "../../src/index";
-import "../../src/index.css";
+import { Hooper, Slide, Navigation, Pagination } from "@wattanx/hooper-vue3";
+import "@wattanx/hooper-vue3/css";
 
 const slides = [1, 2, 3, 4, 5, 6];
 </script>

@@ -50,6 +50,9 @@ importers:
 
   playground:
     dependencies:
+      '@wattanx/hooper-vue3':
+        specifier: workspace:*
+        version: link:..
       vue:
         specifier: ^3.3.8
         version: 3.5.17(typescript@5.8.3)
