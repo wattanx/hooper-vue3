@@ -1,4 +1,4 @@
-import Carousel from "./Carousel";
+import Carousel from "./Carousel.vue";
 import Slide from "./Slide.vue";
 import addonMixin from "./addons/Mixin";
 import Icon from "./addons/Icon.vue";
