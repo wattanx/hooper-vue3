@@ -1,5 +1,5 @@
 import Carousel from "./Carousel";
-import Slide from "./Slide";
+import Slide from "./Slide.vue";
 import addonMixin from "./addons/Mixin";
 import Icon from "./addons/Icon.vue";
 import Progress from "./addons/Progress.vue";
