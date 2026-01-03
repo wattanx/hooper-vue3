@@ -1,10 +1,10 @@
-import Carousel from "./Carousel";
-import Slide from "./Slide";
+import Carousel from "./Carousel.vue";
+import Slide from "./Slide.vue";
 import addonMixin from "./addons/Mixin";
-import Icon from "./addons/Icon";
-import Progress from "./addons/Progress";
-import Pagination from "./addons/Pagination";
-import Navigation from "./addons/Navigation";
+import Icon from "./addons/Icon.vue";
+import Progress from "./addons/Progress.vue";
+import Pagination from "./addons/Pagination.vue";
+import Navigation from "./addons/Navigation.vue";
 
 export {
   Carousel as Hooper,
