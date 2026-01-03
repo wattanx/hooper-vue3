@@ -1,3 +1,7 @@
+<script lang="ts">
+const groupEmitter = new EventTarget();
+</script>
+
 <script setup lang="ts">
 import {
   h,
@@ -79,8 +83,6 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-
-const groupEmitter = new EventTarget();
 
 // State
 const isDragging = ref(false);
