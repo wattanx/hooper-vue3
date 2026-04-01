@@ -31,13 +31,10 @@ jobs:
       - name: Update npm
         run: npm install -g npm@latest
 
-      - run: pnpm i
-
-      - name: Prepare
-        run: pnpm run dev:prepare
+      - run: pnpm i --frozen-lockfile
 
       - name: PNPM build
-        run: pnpm run prepack
+        run: pnpm run build
 
       - name: Publish to NPM
         run: pnpm publish --access public --no-git-checks
